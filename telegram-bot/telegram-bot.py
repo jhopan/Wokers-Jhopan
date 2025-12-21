@@ -26,8 +26,8 @@ from typing import Optional
 # Ganti dengan token bot Telegram kamu dari @BotFather
 TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
 
-# Ganti dengan domain Cloudflare Workers kamu
-WORKER_DOMAIN = "jhopan.workers.dev"  # atau domain custom kamu
+# Domain Cloudflare Workers (sudah pakai custom domain)
+WORKER_DOMAIN = "jhopan.my.id"
 
 # URL API Jhopan
 API_BASE_URL = f"https://{WORKER_DOMAIN}/api/v1/sub"
