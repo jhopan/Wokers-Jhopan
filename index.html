@@ -325,16 +325,6 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label for="format">📋 Output Format:</label>
-          <select id="format">
-            <option value="raw">Raw Links (Universal)</option>
-            <option value="v2ray">Base64 (V2Ray/V2RayNG)</option>
-            <option value="clash">Clash YAML</option>
-            <option value="sfa">Sing-Box JSON</option>
-          </select>
-        </div>
-
         <button class="btn" onclick="loadServers()">
           🔍 Show Available Servers
         </button>
@@ -386,6 +376,17 @@
               id="selectedDetails"
             ></div>
           </div>
+          
+          <div class="form-group">
+            <label for="format">📋 Convert to Format:</label>
+            <select id="format" onchange="convertFormat()">
+              <option value="raw">Raw Links (Universal)</option>
+              <option value="v2ray">Base64 (V2Ray/V2RayNG)</option>
+              <option value="clash">Clash YAML</option>
+              <option value="sfa">Sing-Box JSON</option>
+            </select>
+          </div>
+          
           <textarea id="configResult" readonly></textarea>
           <button class="btn copy-btn" onclick="copyConfig()">
             📋 Copy Config
@@ -451,7 +452,6 @@
         const country = document.getElementById("country").value;
         const protocol = document.getElementById("protocol").value;
         const port = document.getElementById("security").value;
-        const format = document.getElementById("format").value;
 
         // Show loading
         document.getElementById("loading").classList.add("show");
@@ -459,25 +459,10 @@
         document.getElementById("resultBox").classList.remove("show");
 
         try {
-          // Fetch server list with limit 50 for better selection
-          const apiUrl = `https://${workerDomain}/api/v1/sub?cc=${country}&vpn=${protocol}&port=${port}&limit=50&format=${format}`;
+          // Always fetch RAW format first for server list
+          const apiUrl = `https://${workerDomain}/api/v1/sub?cc=${country}&vpn=${protocol}&port=${port}&limit=50&format=raw`;
           const response = await fetch(apiUrl);
           const configText = await response.text();
-
-          // For non-raw formats, show as single config
-          if (format !== "raw") {
-            serverData = [{
-              config: configText,
-              name: `${getCountryName(country)} - ${protocol.toUpperCase()} - ${format.toUpperCase()}`,
-              ip: `Batch Config (50 servers)`,
-              ping: 0,
-              country: country
-            }];
-            displayServers();
-            document.getElementById("loading").classList.remove("show");
-            document.getElementById("serverList").style.display = "block";
-            return;
-          }
 
           // Parse raw configs
           const configs = configText.split("\n").filter((line) => line.trim());
@@ -552,7 +537,6 @@
         serverData.forEach((server, index) => {
           const pingClass =
             server.ping < 50 ? "" : server.ping < 100 ? "medium" : "slow";
-          const pingDisplay = server.ping === 0 ? "Batch" : `${server.ping}ms`;
 
           const serverDiv = document.createElement("div");
           serverDiv.className = "server-item";
@@ -563,7 +547,7 @@
                         <div class="server-name">${server.name}</div>
                         <div class="server-details">📍 ${server.ip}</div>
                     </div>
-                    <div class="server-ping ${pingClass}">${pingDisplay}</div>
+                    <div class="server-ping ${pingClass}">${server.ping}ms</div>
                 `;
 
           serversDiv.appendChild(serverDiv);
@@ -586,11 +570,38 @@
         // Show config
         const port = document.getElementById("security").value;
         const securityType = port === "443" ? "TLS" : "NTLS";
-        const format = document.getElementById("format").value;
-        const pingDisplay = server.ping === 0 ? "Batch Config" : `${server.ping}ms`;
 
         document.getElementById("selectedServer").textContent = server.name;
-        document.getElementById("selectedPing").textContent = pingDisplay;
+        document.getElementById("selectedPing").textContent = `${server.ping}ms`;
+        document.getElementById("selectedDetails").innerHTML = `
+                📍 Server: <code>${server.ip}</code><br>
+                🌍 Country: ${getCountryName(server.country)}<br>
+                🔐 Protocol: ${document
+                  .getElementById("protocol")
+                  .value.toUpperCase()}<br>
+                🔒 Security: ${securityType} (Port ${port})
+            `;
+
+        // Reset format to raw and show raw config
+        document.getElementById("format").value = "raw";
+        document.getElementById("configResult").value = server.config;
+        document.getElementById("resultBox").classList.add("show");
+
+        // Scroll to result
+        document
+          .getElementById("resultBox")
+          .scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      async function convertFormat() {
+        if (selectedServerIndex === -1) return;
+        
+        const server = serverData[selectedServerIndex];
+        const format = document.getElementById("format").value;
+        const port = document.getElementById("security").value;
+        const securityType = port === "443" ? "TLS" : "NTLS";
+        
+        // Update details to show current format
         document.getElementById("selectedDetails").innerHTML = `
                 📍 Server: <code>${server.ip}</code><br>
                 🌍 Country: ${getCountryName(server.country)}<br>
@@ -600,14 +611,27 @@
                 🔒 Security: ${securityType} (Port ${port})<br>
                 📋 Format: ${format.toUpperCase()}
             `;
-
-        document.getElementById("configResult").value = server.config;
-        document.getElementById("resultBox").classList.add("show");
-
-        // Scroll to result
-        document
-          .getElementById("resultBox")
-          .scrollIntoView({ behavior: "smooth", block: "nearest" });
+        
+        if (format === "raw") {
+          // Show original raw config
+          document.getElementById("configResult").value = server.config;
+          return;
+        }
+        
+        // Convert to other formats via API
+        try {
+          const country = document.getElementById("country").value;
+          const protocol = document.getElementById("protocol").value;
+          const apiUrl = `https://${workerDomain}/api/v1/sub?cc=${country}&vpn=${protocol}&port=${port}&limit=1&format=${format}`;
+          
+          // Use the specific server by filtering
+          const response = await fetch(apiUrl);
+          const convertedConfig = await response.text();
+          
+          document.getElementById("configResult").value = convertedConfig;
+        } catch (error) {
+          alert("Error converting format: " + error.message);
+        }
       }
 
       function getCountryName(code) {
@@ -650,13 +674,15 @@
       function openV2Ray() {
         const config = document.getElementById("configResult").value;
         const format = document.getElementById("format").value;
-        
+
         // Only works for raw format
         if (format === "raw") {
           const firstLine = config.split("\n")[0];
           window.location.href = firstLine;
         } else {
-          alert("Direct open only works with Raw format. Please use Copy or Download instead.");
+          alert(
+            "Direct open only works with Raw format. Please use Copy or Download instead."
+          );
         }
         return false;
       }
@@ -666,13 +692,13 @@
         const protocol = document.getElementById("protocol").value;
         const format = document.getElementById("format").value;
         const country = document.getElementById("country").value;
-        
+
         // Determine file extension based on format
         let extension = "txt";
         if (format === "clash") extension = "yaml";
         else if (format === "sfa") extension = "json";
         else if (format === "v2ray") extension = "txt";
-        
+
         const filename = `jhopan-${country}-${protocol}-${format}-${Date.now()}.${extension}`;
 
         const blob = new Blob([config], { type: "text/plain" });
