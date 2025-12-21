@@ -56,6 +56,7 @@ ADMIN_IDS=123456789,987654321
 Jika kamu mau **non-aktifkan website** dan hanya pakai bot:
 
 ### 1. Disable GitHub Pages:
+
 - Buka repo di GitHub
 - Settings → Pages
 - Source: **None**
@@ -76,13 +77,13 @@ Tambahkan token di API request untuk extra security.
 
 ## ✅ Perintah Bot
 
-| Command | Fungsi |
-|---------|--------|
-| `/start` | Menu utama |
+| Command   | Fungsi                    |
+| --------- | ------------------------- |
+| `/start`  | Menu utama                |
 | `/config` | Quick access ambil config |
-| `/help` | Bantuan & cara pakai |
-| `/status` | Status bot & API |
-| `/myid` | Cek User ID kamu |
+| `/help`   | Bantuan & cara pakai      |
+| `/status` | Status bot & API          |
+| `/myid`   | Cek User ID kamu          |
 
 ---
 
@@ -101,6 +102,7 @@ pip install -r requirements.txt
 ### Bot tidak respon
 
 **Cek:**
+
 1. ✅ Token bot benar di `.env`
 2. ✅ Virtual environment aktif: `source venv/bin/activate`
 3. ✅ Dependencies installed: `pip list | grep telegram`
@@ -108,7 +110,8 @@ pip install -r requirements.txt
 
 ### Access Denied di bot
 
-**Solusi:** 
+**Solusi:**
+
 - Cek `ADMIN_ONLY` setting di `.env`
 - Pastikan User ID kamu ada di `ADMIN_IDS`
 - Gunakan `/myid` untuk cek ID

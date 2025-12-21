@@ -29,5 +29,5 @@ if not exist ".env" (
 
 REM Run bot
 echo Starting Jhopan VPN Bot...
-python bot.py
+python main.py
 pause

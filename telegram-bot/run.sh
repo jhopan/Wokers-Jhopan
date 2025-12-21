@@ -28,4 +28,4 @@ fi
 
 # Run bot
 echo "🚀 Starting Jhopan VPN Bot..."
-python bot.py
+python main.py

@@ -1,4 +1,4 @@
-﻿#  Jhopan VPN - Free VPN Configuration Generator
+﻿# Jhopan VPN - Free VPN Configuration Generator
 
 ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare)
 ![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-222222?logo=github)
@@ -7,19 +7,19 @@
 
 Sistem VPN gratis berbasis Cloudflare Workers dengan generator konfigurasi untuk VLESS, Trojan, dan Shadowsocks. Mendukung 51 negara dengan 316+ proxy server.
 
-##  Fitur Utama
+## Fitur Utama
 
--  **51 Negara** - Indonesia, Singapore, US, Japan, Korea, dll
--  **3 Protokol** - VLESS, Trojan, Shadowsocks
--  **4 Format** - Raw Links, Clash YAML, Base64, Sing-Box JSON
--  **Auto Sorting** - Server terurut berdasarkan ping
--  **Telegram Bot** - Interface menu untuk ambil config
--  **Web Generator** - https://jhopan.github.io/Wokers-Jhopan
--  **100% Gratis** - Tanpa subscription
+- **51 Negara** - Indonesia, Singapore, US, Japan, Korea, dll
+- **3 Protokol** - VLESS, Trojan, Shadowsocks
+- **4 Format** - Raw Links, Clash YAML, Base64, Sing-Box JSON
+- **Auto Sorting** - Server terurut berdasarkan ping
+- **Telegram Bot** - Interface menu untuk ambil config
+- **Web Generator** - https://jhopan.github.io/Wokers-Jhopan
+- **100% Gratis** - Tanpa subscription
 
 ---
 
-##  Struktur Project
+## Struktur Project
 
 ```
 Jhopan-VPN/
@@ -40,18 +40,18 @@ Jhopan-VPN/
 
 ---
 
-##  Quick Start
+## Quick Start
 
 ### 1 Deploy Cloudflare Worker
 
 #### **Opsi A: Via Dashboard (Recommended)**
 
 1. Login ke https://dash.cloudflare.com
-2. **Workers & Pages**  **Create Application**  **Create Worker**
+2. **Workers & Pages** **Create Application** **Create Worker**
 3. **Edit Code**
 4. **Hapus semua** code default
 5. **Copy semua** dari `_worker.js` (843 baris)
-6. **Paste**  **Save and Deploy**
+6. **Paste** **Save and Deploy**
 
 #### **Opsi B: Via Wrangler CLI**
 
@@ -68,18 +68,18 @@ wrangler deploy
 
 ### 2 Setup Custom Domain (Opsional tapi Recommended)
 
-1. Dashboard  **Workers**  Pilih worker kamu
-2. **Settings**  **Triggers**  **Custom Domains**
-3. **Add Custom Domain**  Masukkan domain (contoh: `vpn.yourdomain.com`)
+1. Dashboard **Workers** Pilih worker kamu
+2. **Settings** **Triggers** **Custom Domains**
+3. **Add Custom Domain** Masukkan domain (contoh: `vpn.yourdomain.com`)
 4. Tunggu 1-2 menit untuk DNS propagation
 
 ### 3 Setup GitHub Pages (Web Generator)
 
 1. Fork/Clone repository ini
 2. Push `index.html` ke GitHub
-3. **Settings**  **Pages**
-4. **Source**: Deploy from branch `main`  folder `/ (root)`
-5. **Save**  Tunggu 2-3 menit
+3. **Settings** **Pages**
+4. **Source**: Deploy from branch `main` folder `/ (root)`
+5. **Save** Tunggu 2-3 menit
 6. Akses di `https://username.github.io/repository-name`
 
 ### 4️⃣ Setup Telegram Bot (Opsional)
@@ -154,17 +154,19 @@ ADMIN_IDS=123456789,987654321
 
 ---
 
-##  Konfigurasi & Customization
+## Konfigurasi & Customization
 
-###  Mengubah URL & Domain
+### Mengubah URL & Domain
 
 **File: `_worker.js`**
 
 ```javascript
 // Line 18-20: Update URL sesuai domain kamu
 const SUB_PAGE_URL = "https://username.github.io/repository-name";
-const KV_PRX_URL = "https://raw.githubusercontent.com/username/repository/main/kvProxyList.json";
-const PRX_BANK_URL = "https://raw.githubusercontent.com/username/repository/main/proxyList.txt";
+const KV_PRX_URL =
+  "https://raw.githubusercontent.com/username/repository/main/kvProxyList.json";
+const PRX_BANK_URL =
+  "https://raw.githubusercontent.com/username/repository/main/proxyList.txt";
 ```
 
 **File: `index.html`**
@@ -181,11 +183,12 @@ const workerDomain = urlParams.get("host") || "your-domain.com";
 WORKER_DOMAIN=your-domain.com
 ```
 
-###  Disable Website (Hanya Telegram)
+### Disable Website (Hanya Telegram)
 
 Jika kamu ingin **non-aktifkan website** dan hanya pakai Telegram bot dengan admin-only:
 
 **1. Disable GitHub Pages:**
+
 - Repo Settings → Pages → Source: **None**
 - Website akan mati, hanya API worker yang jalan
 
@@ -209,15 +212,15 @@ Edit `_worker.js`, tambahkan di awal function:
 // Line ~100, di function handleRequest
 async function handleRequest(request) {
   const url = new URL(request.url);
-  
+
   // Password protection
-  const authToken = url.searchParams.get('token');
+  const authToken = url.searchParams.get("token");
   const SECRET_TOKEN = "your-secret-token-here"; // Ganti ini
-  
+
   if (authToken !== SECRET_TOKEN) {
     return new Response("Unauthorized", { status: 401 });
   }
-  
+
   // ... rest of code
 }
 ```
@@ -231,6 +234,7 @@ API_BASE_URL = f"https://{WORKER_DOMAIN}/api/v1/sub?token=your-secret-token-here
 
 **Result:** Website mati ✅ | Telegram bot admin-only ✅ | API protected ✅
 WORKER_DOMAIN = "your-domain.com"
+
 ```
 
 ---
@@ -255,12 +259,16 @@ WORKER_DOMAIN = "your-domain.com"
 
 **Raw Links (Indonesia, VLESS, TLS):**
 ```
+
 https://your-domain.com/api/v1/sub?cc=ID&vpn=vless&port=443&limit=10&format=raw
+
 ```
 
 **Clash YAML (Singapore, All Protocols):**
 ```
+
 https://your-domain.com/api/v1/sub?cc=SG&vpn=vless,trojan,ss&port=443&limit=20&format=clash
+
 ```
 
 ---
@@ -326,7 +334,7 @@ https://your-domain.com/api/v1/sub?cc=SG&vpn=vless,trojan,ss&port=443&limit=20&f
 **Solusi:** Pastikan custom domain sudah di-setup di **Triggers  Custom Domains**.
 
 ### Telegram bot tidak respon
-**Solusi:** 
+**Solusi:**
 1. Cek TOKEN bot benar
 2. Cek `WORKER_DOMAIN` sudah sesuai
 3. Install dependencies: `pip install -r requirements.txt`
@@ -338,7 +346,7 @@ https://your-domain.com/api/v1/sub?cc=SG&vpn=vless,trojan,ss&port=443&limit=20&f
 ### Cloudflare Workers Free Plan
 - **100,000 requests/day**
 - **10ms CPU time per request**
-- **Unlimited custom domains** 
+- **Unlimited custom domains**
 
 ---
 
@@ -351,3 +359,4 @@ MIT License
 **Made with  by Jhopan**
 
 ** Happy Tunneling!**
+```
