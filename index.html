@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jhopan VPN - Free VPN Configuration</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Jhopan VPN - Free VPN Configuration Generator</title>
     <style>
       * {
         margin: 0;
@@ -376,7 +379,7 @@
               id="selectedDetails"
             ></div>
           </div>
-          
+
           <div class="form-group">
             <label for="format">📋 Convert to Format:</label>
             <select id="format" onchange="convertFormat()">
@@ -386,7 +389,7 @@
               <option value="sfa">Sing-Box JSON</option>
             </select>
           </div>
-          
+
           <textarea id="configResult" readonly></textarea>
           <button class="btn copy-btn" onclick="copyConfig()">
             📋 Copy Config
@@ -572,7 +575,9 @@
         const securityType = port === "443" ? "TLS" : "NTLS";
 
         document.getElementById("selectedServer").textContent = server.name;
-        document.getElementById("selectedPing").textContent = `${server.ping}ms`;
+        document.getElementById(
+          "selectedPing"
+        ).textContent = `${server.ping}ms`;
         document.getElementById("selectedDetails").innerHTML = `
                 📍 Server: <code>${server.ip}</code><br>
                 🌍 Country: ${getCountryName(server.country)}<br>
@@ -595,12 +600,12 @@
 
       async function convertFormat() {
         if (selectedServerIndex === -1) return;
-        
+
         const server = serverData[selectedServerIndex];
         const format = document.getElementById("format").value;
         const port = document.getElementById("security").value;
         const securityType = port === "443" ? "TLS" : "NTLS";
-        
+
         // Update details to show current format
         document.getElementById("selectedDetails").innerHTML = `
                 📍 Server: <code>${server.ip}</code><br>
@@ -611,23 +616,23 @@
                 🔒 Security: ${securityType} (Port ${port})<br>
                 📋 Format: ${format.toUpperCase()}
             `;
-        
+
         if (format === "raw") {
           // Show original raw config
           document.getElementById("configResult").value = server.config;
           return;
         }
-        
+
         // Convert to other formats via API
         try {
           const country = document.getElementById("country").value;
           const protocol = document.getElementById("protocol").value;
           const apiUrl = `https://${workerDomain}/api/v1/sub?cc=${country}&vpn=${protocol}&port=${port}&limit=1&format=${format}`;
-          
+
           // Use the specific server by filtering
           const response = await fetch(apiUrl);
           const convertedConfig = await response.text();
-          
+
           document.getElementById("configResult").value = convertedConfig;
         } catch (error) {
           alert("Error converting format: " + error.message);
