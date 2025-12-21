@@ -16,8 +16,10 @@ const neko = "Y2xhc2g=";
 const PORTS = [443, 80];
 const PROTOCOLS = [atob(horse), atob(flash), "ss"];
 const SUB_PAGE_URL = "https://jhopan.github.io/Wokers-Jhopan";
-const KV_PRX_URL = "https://raw.githubusercontent.com/jhopan/Wokers-Jhopan/refs/heads/main/kvProxyList.json";
-const PRX_BANK_URL = "https://raw.githubusercontent.com/jhopan/Wokers-Jhopan/refs/heads/main/proxyList.txt";
+const KV_PRX_URL =
+  "https://raw.githubusercontent.com/jhopan/Wokers-Jhopan/refs/heads/main/kvProxyList.json";
+const PRX_BANK_URL =
+  "https://raw.githubusercontent.com/jhopan/Wokers-Jhopan/refs/heads/main/proxyList.txt";
 const DNS_SERVER_ADDRESS = "8.8.8.8";
 const DNS_SERVER_PORT = 53;
 const RELAY_SERVER_UDP = {
@@ -118,11 +120,15 @@ export default {
 
         if (url.pathname.length == 3 || url.pathname.match(",")) {
           // Contoh: /ID, /SG, dll
-          const prxKeys = url.pathname.replace("/", "").toUpperCase().split(",");
+          const prxKeys = url.pathname
+            .replace("/", "")
+            .toUpperCase()
+            .split(",");
           const prxKey = prxKeys[Math.floor(Math.random() * prxKeys.length)];
           const kvPrx = await getKVPrxList();
 
-          prxIP = kvPrx[prxKey][Math.floor(Math.random() * kvPrx[prxKey].length)];
+          prxIP =
+            kvPrx[prxKey][Math.floor(Math.random() * kvPrx[prxKey].length)];
 
           return await websocketHandler(request);
         } else if (prxMatch) {
@@ -150,12 +156,14 @@ export default {
         if (apiPath.startsWith("/sub")) {
           const filterCC = url.searchParams.get("cc")?.split(",") || [];
           const filterPort = url.searchParams.get("port")?.split(",") || PORTS;
-          const filterVPN = url.searchParams.get("vpn")?.split(",") || PROTOCOLS;
+          const filterVPN =
+            url.searchParams.get("vpn")?.split(",") || PROTOCOLS;
           const filterLimit = parseInt(url.searchParams.get("limit")) || 10;
           const filterFormat = url.searchParams.get("format") || "raw";
           const fillerDomain = url.searchParams.get("domain") || APP_DOMAIN;
 
-          const prxBankUrl = url.searchParams.get("prx-list") || env.PRX_BANK_URL;
+          const prxBankUrl =
+            url.searchParams.get("prx-list") || env.PRX_BANK_URL;
           const prxList = await getPrxList(prxBankUrl)
             .then((prxs) => {
               // Filter CC
@@ -188,7 +196,9 @@ export default {
                   uri.username = btoa(`none:${uuid}`);
                   uri.searchParams.set(
                     "plugin",
-                    `${atob(v2)}-plugin${port == 80 ? "" : ";tls"};mux=0;mode=websocket;path=/${prx.prxIP}-${
+                    `${atob(v2)}-plugin${
+                      port == 80 ? "" : ";tls"
+                    };mux=0;mode=websocket;path=/${prx.prxIP}-${
                       prx.prxPort
                     };host=${fillerDomain}`
                   );
@@ -197,12 +207,15 @@ export default {
                 }
 
                 uri.searchParams.set("security", port == 443 ? "tls" : "none");
-                uri.searchParams.set("sni", port == 80 && protocol == atob(flash) ? "" : fillerDomain);
+                uri.searchParams.set(
+                  "sni",
+                  port == 80 && protocol == atob(flash) ? "" : fillerDomain
+                );
                 uri.searchParams.set("path", `/${prx.prxIP}-${prx.prxPort}`);
 
-                uri.hash = `${result.length + 1} ${getFlagEmoji(prx.country)} ${prx.org} WS ${
-                  port == 443 ? "TLS" : "NTLS"
-                } [${serviceName}]`;
+                uri.hash = `${result.length + 1} ${getFlagEmoji(prx.country)} ${
+                  prx.org
+                } WS ${port == 443 ? "TLS" : "NTLS"} [${serviceName}]`;
                 result.push(uri.toString());
               }
             }
@@ -291,7 +304,11 @@ async function websocketHandler(request) {
   };
   const earlyDataHeader = request.headers.get("sec-websocket-protocol") || "";
 
-  const readableWebSocketStream = makeReadableWebSocketStream(webSocket, earlyDataHeader, log);
+  const readableWebSocketStream = makeReadableWebSocketStream(
+    webSocket,
+    earlyDataHeader,
+    log
+  );
 
   let remoteSocketWrapper = {
     value: null,
@@ -334,7 +351,9 @@ async function websocketHandler(request) {
           }
 
           addressLog = protocolHeader.addressRemote;
-          portLog = `${protocolHeader.portRemote} -> ${protocolHeader.isUDP ? "UDP" : "TCP"}`;
+          portLog = `${protocolHeader.portRemote} -> ${
+            protocolHeader.isUDP ? "UDP" : "TCP"
+          }`;
 
           if (protocolHeader.hasError) {
             throw new Error(protocolHeader.message);
@@ -397,8 +416,16 @@ async function protocolSniffer(buffer) {
   if (buffer.byteLength >= 62) {
     const horseDelimiter = new Uint8Array(buffer.slice(56, 60));
     if (horseDelimiter[0] === 0x0d && horseDelimiter[1] === 0x0a) {
-      if (horseDelimiter[2] === 0x01 || horseDelimiter[2] === 0x03 || horseDelimiter[2] === 0x7f) {
-        if (horseDelimiter[3] === 0x01 || horseDelimiter[3] === 0x03 || horseDelimiter[3] === 0x04) {
+      if (
+        horseDelimiter[2] === 0x01 ||
+        horseDelimiter[2] === 0x03 ||
+        horseDelimiter[2] === 0x7f
+      ) {
+        if (
+          horseDelimiter[3] === 0x01 ||
+          horseDelimiter[3] === 0x03 ||
+          horseDelimiter[3] === 0x04
+        ) {
           return atob(horse);
         }
       }
@@ -407,7 +434,11 @@ async function protocolSniffer(buffer) {
 
   const flashDelimiter = new Uint8Array(buffer.slice(1, 17));
   // Hanya mendukung UUID v4
-  if (arrayBufferToHex(flashDelimiter).match(/^[0-9a-f]{8}[0-9a-f]{4}4[0-9a-f]{3}[89ab][0-9a-f]{3}[0-9a-f]{12}$/i)) {
+  if (
+    arrayBufferToHex(flashDelimiter).match(
+      /^[0-9a-f]{8}[0-9a-f]{4}4[0-9a-f]{3}[89ab][0-9a-f]{3}[0-9a-f]{12}$/i
+    )
+  ) {
     return atob(flash);
   }
 
@@ -457,7 +488,15 @@ async function handleTCPOutBound(
   remoteSocketToWS(tcpSocket, webSocket, responseHeader, retry, log);
 }
 
-async function handleUDPOutbound(targetAddress, targetPort, dataChunk, webSocket, responseHeader, log, relay) {
+async function handleUDPOutbound(
+  targetAddress,
+  targetPort,
+  dataChunk,
+  webSocket,
+  responseHeader,
+  log,
+  relay
+) {
   try {
     let protocolHeader = responseHeader;
 
@@ -469,10 +508,15 @@ async function handleUDPOutbound(targetAddress, targetPort, dataChunk, webSocket
     const header = `udp:${targetAddress}:${targetPort}`;
     const headerBuffer = new TextEncoder().encode(header);
     const separator = new Uint8Array([0x7c]);
-    const relayMessage = new Uint8Array(headerBuffer.length + separator.length + dataChunk.byteLength);
+    const relayMessage = new Uint8Array(
+      headerBuffer.length + separator.length + dataChunk.byteLength
+    );
     relayMessage.set(headerBuffer, 0);
     relayMessage.set(separator, headerBuffer.length);
-    relayMessage.set(new Uint8Array(dataChunk), headerBuffer.length + separator.length);
+    relayMessage.set(
+      new Uint8Array(dataChunk),
+      headerBuffer.length + separator.length
+    );
 
     const writer = tcpSocket.writable.getWriter();
     await writer.write(relayMessage);
@@ -483,7 +527,9 @@ async function handleUDPOutbound(targetAddress, targetPort, dataChunk, webSocket
         async write(chunk) {
           if (webSocket.readyState === WS_READY_STATE_OPEN) {
             if (protocolHeader) {
-              webSocket.send(await new Blob([protocolHeader, chunk]).arrayBuffer());
+              webSocket.send(
+                await new Blob([protocolHeader, chunk]).arrayBuffer()
+              );
               protocolHeader = null;
             } else {
               webSocket.send(chunk);
@@ -558,16 +604,24 @@ function readSsHeader(ssBuffer) {
   switch (addressType) {
     case 1:
       addressLength = 4;
-      addressValue = new Uint8Array(ssBuffer.slice(addressValueIndex, addressValueIndex + addressLength)).join(".");
+      addressValue = new Uint8Array(
+        ssBuffer.slice(addressValueIndex, addressValueIndex + addressLength)
+      ).join(".");
       break;
     case 3:
-      addressLength = new Uint8Array(ssBuffer.slice(addressValueIndex, addressValueIndex + 1))[0];
+      addressLength = new Uint8Array(
+        ssBuffer.slice(addressValueIndex, addressValueIndex + 1)
+      )[0];
       addressValueIndex += 1;
-      addressValue = new TextDecoder().decode(ssBuffer.slice(addressValueIndex, addressValueIndex + addressLength));
+      addressValue = new TextDecoder().decode(
+        ssBuffer.slice(addressValueIndex, addressValueIndex + addressLength)
+      );
       break;
     case 4:
       addressLength = 16;
-      const dataView = new DataView(ssBuffer.slice(addressValueIndex, addressValueIndex + addressLength));
+      const dataView = new DataView(
+        ssBuffer.slice(addressValueIndex, addressValueIndex + addressLength)
+      );
       const ipv6 = [];
       for (let i = 0; i < 8; i++) {
         ipv6.push(dataView.getUint16(i * 2).toString(16));
@@ -609,7 +663,9 @@ function readFlashHeader(buffer) {
 
   const optLength = new Uint8Array(buffer.slice(17, 18))[0];
 
-  const cmd = new Uint8Array(buffer.slice(18 + optLength, 18 + optLength + 1))[0];
+  const cmd = new Uint8Array(
+    buffer.slice(18 + optLength, 18 + optLength + 1)
+  )[0];
   if (cmd === 1) {
   } else if (cmd === 2) {
     isUDP = true;
@@ -624,7 +680,9 @@ function readFlashHeader(buffer) {
   const portRemote = new DataView(portBuffer).getUint16(0);
 
   let addressIndex = portIndex + 2;
-  const addressBuffer = new Uint8Array(buffer.slice(addressIndex, addressIndex + 1));
+  const addressBuffer = new Uint8Array(
+    buffer.slice(addressIndex, addressIndex + 1)
+  );
 
   const addressType = addressBuffer[0];
   let addressLength = 0;
@@ -633,16 +691,24 @@ function readFlashHeader(buffer) {
   switch (addressType) {
     case 1: // For IPv4
       addressLength = 4;
-      addressValue = new Uint8Array(buffer.slice(addressValueIndex, addressValueIndex + addressLength)).join(".");
+      addressValue = new Uint8Array(
+        buffer.slice(addressValueIndex, addressValueIndex + addressLength)
+      ).join(".");
       break;
     case 2: // For Domain
-      addressLength = new Uint8Array(buffer.slice(addressValueIndex, addressValueIndex + 1))[0];
+      addressLength = new Uint8Array(
+        buffer.slice(addressValueIndex, addressValueIndex + 1)
+      )[0];
       addressValueIndex += 1;
-      addressValue = new TextDecoder().decode(buffer.slice(addressValueIndex, addressValueIndex + addressLength));
+      addressValue = new TextDecoder().decode(
+        buffer.slice(addressValueIndex, addressValueIndex + addressLength)
+      );
       break;
     case 3: // For IPv6
       addressLength = 16;
-      const dataView = new DataView(buffer.slice(addressValueIndex, addressValueIndex + addressLength));
+      const dataView = new DataView(
+        buffer.slice(addressValueIndex, addressValueIndex + addressLength)
+      );
       const ipv6 = [];
       for (let i = 0; i < 8; i++) {
         ipv6.push(dataView.getUint16(i * 2).toString(16));
@@ -699,16 +765,24 @@ function readHorseHeader(buffer) {
   switch (addressType) {
     case 1: // For IPv4
       addressLength = 4;
-      addressValue = new Uint8Array(dataBuffer.slice(addressValueIndex, addressValueIndex + addressLength)).join(".");
+      addressValue = new Uint8Array(
+        dataBuffer.slice(addressValueIndex, addressValueIndex + addressLength)
+      ).join(".");
       break;
     case 3: // For Domain
-      addressLength = new Uint8Array(dataBuffer.slice(addressValueIndex, addressValueIndex + 1))[0];
+      addressLength = new Uint8Array(
+        dataBuffer.slice(addressValueIndex, addressValueIndex + 1)
+      )[0];
       addressValueIndex += 1;
-      addressValue = new TextDecoder().decode(dataBuffer.slice(addressValueIndex, addressValueIndex + addressLength));
+      addressValue = new TextDecoder().decode(
+        dataBuffer.slice(addressValueIndex, addressValueIndex + addressLength)
+      );
       break;
     case 4: // For IPv6
       addressLength = 16;
-      const dataView = new DataView(dataBuffer.slice(addressValueIndex, addressValueIndex + addressLength));
+      const dataView = new DataView(
+        dataBuffer.slice(addressValueIndex, addressValueIndex + addressLength)
+      );
       const ipv6 = [];
       for (let i = 0; i < 8; i++) {
         ipv6.push(dataView.getUint16(i * 2).toString(16));
@@ -744,7 +818,13 @@ function readHorseHeader(buffer) {
   };
 }
 
-async function remoteSocketToWS(remoteSocket, webSocket, responseHeader, retry, log) {
+async function remoteSocketToWS(
+  remoteSocket,
+  webSocket,
+  responseHeader,
+  retry,
+  log
+) {
   let header = responseHeader;
   let hasIncomingData = false;
   await remoteSocket.readable
@@ -764,7 +844,9 @@ async function remoteSocketToWS(remoteSocket, webSocket, responseHeader, retry, 
           }
         },
         close() {
-          log(`remoteConnection!.readable is close with hasIncomingData is ${hasIncomingData}`);
+          log(
+            `remoteConnection!.readable is close with hasIncomingData is ${hasIncomingData}`
+          );
         },
         abort(reason) {
           console.error(`remoteConnection!.readable abort`, reason);
@@ -783,7 +865,10 @@ async function remoteSocketToWS(remoteSocket, webSocket, responseHeader, retry, 
 
 function safeCloseWebSocket(socket) {
   try {
-    if (socket.readyState === WS_READY_STATE_OPEN || socket.readyState === WS_READY_STATE_CLOSING) {
+    if (
+      socket.readyState === WS_READY_STATE_OPEN ||
+      socket.readyState === WS_READY_STATE_CLOSING
+    ) {
       socket.close();
     }
   } catch (error) {
@@ -812,7 +897,9 @@ function base64ToArrayBuffer(base64Str) {
 }
 
 function arrayBufferToHex(buffer) {
-  return [...new Uint8Array(buffer)].map((x) => x.toString(16).padStart(2, "0")).join("");
+  return [...new Uint8Array(buffer)]
+    .map((x) => x.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 function shuffleArray(array) {
@@ -825,7 +912,10 @@ function shuffleArray(array) {
     currentIndex--;
 
     // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
 }
 

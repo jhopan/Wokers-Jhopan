@@ -22,22 +22,22 @@ Panduan lengkap setup Jhopan VPN dari awal sampai jalan!
 
 ### 📊 Perbandingan Lengkap
 
-| Aspek | Domain Gratis | Domain Berbayar | Cloudflare Workers.dev |
-|-------|---------------|-----------------|------------------------|
-| **Harga** | Rp 0 | Rp 100.000 - 200.000/tahun | Rp 0 (included) |
-| **Setup Time** | Instant - 2 minggu | Instant | Instant (auto) |
-| **Renewal** | Manual (30-90 hari) | Auto-renew | Unlimited |
-| **Kredibilitas** | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **Risiko Banned** | Tinggi (shared) | Rendah (dedicated) | Rendah |
-| **Custom Subdomain** | Terbatas | Unlimited | N/A |
-| **Expiry Warning** | Jarang | Email otomatis | Never expire |
-| **Support** | Forum only | 24/7 email/chat | Cloudflare support |
-| **SSL Certificate** | Free (Cloudflare) | Free (Cloudflare/Let's Encrypt) | Auto HTTPS |
-| **Whois Privacy** | Tidak ada | Included (biasanya) | N/A |
-| **Transfer Domain** | Tidak bisa | Bisa | N/A |
-| **DNS Speed** | ⚡⚡ (50-200ms) | ⚡⚡⚡⚡⚡ (10-30ms) | ⚡⚡⚡⚡⚡ (5-15ms) |
-| **Uptime** | 95-98% | 99.9% | 99.99% |
-| **TTL Control** | Terbatas (600s+) | Full control (60s+) | Otomatis (optimized) |
+| Aspek                | Domain Gratis       | Domain Berbayar                 | Cloudflare Workers.dev |
+| -------------------- | ------------------- | ------------------------------- | ---------------------- |
+| **Harga**            | Rp 0                | Rp 100.000 - 200.000/tahun      | Rp 0 (included)        |
+| **Setup Time**       | Instant - 2 minggu  | Instant                         | Instant (auto)         |
+| **Renewal**          | Manual (30-90 hari) | Auto-renew                      | Unlimited              |
+| **Kredibilitas**     | ⭐⭐                | ⭐⭐⭐⭐⭐                      | ⭐⭐⭐                 |
+| **Risiko Banned**    | Tinggi (shared)     | Rendah (dedicated)              | Rendah                 |
+| **Custom Subdomain** | Terbatas            | Unlimited                       | N/A                    |
+| **Expiry Warning**   | Jarang              | Email otomatis                  | Never expire           |
+| **Support**          | Forum only          | 24/7 email/chat                 | Cloudflare support     |
+| **SSL Certificate**  | Free (Cloudflare)   | Free (Cloudflare/Let's Encrypt) | Auto HTTPS             |
+| **Whois Privacy**    | Tidak ada           | Included (biasanya)             | N/A                    |
+| **Transfer Domain**  | Tidak bisa          | Bisa                            | N/A                    |
+| **DNS Speed**        | ⚡⚡ (50-200ms)     | ⚡⚡⚡⚡⚡ (10-30ms)            | ⚡⚡⚡⚡⚡ (5-15ms)    |
+| **Uptime**           | 95-98%              | 99.9%                           | 99.99%                 |
+| **TTL Control**      | Terbatas (600s+)    | Full control (60s+)             | Otomatis (optimized)   |
 
 ---
 
@@ -46,6 +46,7 @@ Panduan lengkap setup Jhopan VPN dari awal sampai jalan!
 #### **1. DNS Resolution Speed (Kecepatan Akses)**
 
 **Domain Gratis (DuckDNS/FreeDNS):**
+
 ```
 User → DNS Query → DuckDNS Server (USA) → Response
 Waktu: 80-200ms (tergantung lokasi)
@@ -56,6 +57,7 @@ $ dig jhopan.duckdns.org
 ```
 
 **Domain Berbayar (Cloudflare/Namecheap):**
+
 ```
 User → DNS Query → Cloudflare Global Network → Response
 Waktu: 10-30ms (edge server terdekat)
@@ -66,6 +68,7 @@ $ dig jhopan.com
 ```
 
 **Workers.dev (Cloudflare Native):**
+
 ```
 User → DNS Query → Cloudflare DNS (1.1.1.1) → Response
 Waktu: 5-15ms (fastest!)
@@ -76,8 +79,9 @@ $ dig jhopan.workers.dev
 ```
 
 **Impact untuk VPN:**
+
 ```
-Domain Gratis: 
+Domain Gratis:
 - Initial connection: 200-500ms
 - Setelah connect: Normal speed
 
@@ -96,6 +100,7 @@ Selisih: ~100-400ms saat pertama connect
 **Scenario: Ganti IP/server baru**
 
 **Domain Gratis:**
+
 ```
 Update DNS → Propagasi global
 Waktu: 15 menit - 24 jam
@@ -111,6 +116,7 @@ Downtime: 1-24 jam (tergantung ISP)
 ```
 
 **Domain Berbayar:**
+
 ```
 Update DNS → Propagasi global
 Waktu: 1-15 menit
@@ -126,6 +132,7 @@ Downtime: 1-5 menit only
 ```
 
 **Impact:**
+
 ```
 Domain Gratis:
 - Maintenance lebih susah (downtime lama)
@@ -143,6 +150,7 @@ Domain Berbayar:
 #### **3. Reliability & Uptime**
 
 **Domain Gratis:**
+
 ```
 Uptime: 95-98% (3-4 jam downtime/bulan)
 Penyebab down:
@@ -157,6 +165,7 @@ FreeDNS down 6 jam (Maret 2024)
 ```
 
 **Domain Berbayar:**
+
 ```
 Uptime: 99.9% (45 menit downtime/tahun)
 Penyebab down:
@@ -169,6 +178,7 @@ Namecheap: 99.9% (no SLA untuk DNS gratis)
 ```
 
 **Impact untuk VPN:**
+
 ```
 Domain Gratis Down:
 ❌ Bot tidak bisa fetch config
@@ -186,6 +196,7 @@ Domain Berbayar Down (jarang):
 #### **4. Throughput & Bandwidth**
 
 **Domain Gratis:**
+
 ```
 DNS Query Limit:
 - DuckDNS: ~100 queries/second per domain
@@ -196,6 +207,7 @@ Jika lebih → Rate limited (delay/timeout)
 ```
 
 **Domain Berbayar:**
+
 ```
 DNS Query Limit:
 - Cloudflare: Unlimited (fair use)
@@ -206,6 +218,7 @@ Rate limit: Praktis tidak ada
 ```
 
 **Impact:**
+
 ```
 10 user concurrent:
 - Domain gratis: OK
@@ -225,6 +238,7 @@ Rate limit: Praktis tidak ada
 #### **5. Geographic Distribution**
 
 **Domain Gratis:**
+
 ```
 DuckDNS:
 - Server: USA (Oregon)
@@ -240,6 +254,7 @@ FreeDNS:
 ```
 
 **Domain Berbayar (Cloudflare DNS):**
+
 ```
 Cloudflare:
 - Server: 300+ locations worldwide
@@ -252,6 +267,7 @@ Magic: User selalu connect ke server terdekat!
 ```
 
 **Real Performance:**
+
 ```
 User di Jakarta:
 - DuckDNS: Query ke USA (250ms)
@@ -269,6 +285,7 @@ Selisih: 30x lebih cepat!
 #### **6. DNSSEC & Security**
 
 **Domain Gratis:**
+
 ```
 DuckDNS: ❌ No DNSSEC
 FreeDNS: ❌ No DNSSEC
@@ -282,6 +299,7 @@ Security risk:
 ```
 
 **Domain Berbayar:**
+
 ```
 Cloudflare: ✅ DNSSEC by default
 Namecheap: ✅ DNSSEC (manual enable)
@@ -294,6 +312,7 @@ Security:
 ```
 
 **Impact:**
+
 ```
 Tanpa DNSSEC:
 - Attacker bisa redirect domain ke server fake
@@ -311,6 +330,7 @@ Dengan DNSSEC:
 ### 📈 Benchmark Real-World
 
 **Test Setup:**
+
 - Location: Jakarta, Indonesia
 - Connection: 100 Mbps
 - VPN Protocol: VLESS
@@ -318,17 +338,18 @@ Dengan DNSSEC:
 
 **Results:**
 
-| Metric | DuckDNS | eu.org | Cloudflare Paid | Workers.dev |
-|--------|---------|--------|-----------------|-------------|
-| **DNS Lookup** | 187ms | 165ms | 12ms | 8ms |
-| **First Connect** | 450ms | 420ms | 95ms | 78ms |
-| **Reconnect** | 280ms | 260ms | 45ms | 32ms |
-| **Download Speed** | 89 Mbps | 89 Mbps | 92 Mbps | 95 Mbps |
-| **Upload Speed** | 87 Mbps | 87 Mbps | 91 Mbps | 94 Mbps |
-| **Ping** | 28ms | 28ms | 26ms | 25ms |
-| **Jitter** | 8ms | 7ms | 3ms | 2ms |
+| Metric             | DuckDNS | eu.org  | Cloudflare Paid | Workers.dev |
+| ------------------ | ------- | ------- | --------------- | ----------- |
+| **DNS Lookup**     | 187ms   | 165ms   | 12ms            | 8ms         |
+| **First Connect**  | 450ms   | 420ms   | 95ms            | 78ms        |
+| **Reconnect**      | 280ms   | 260ms   | 45ms            | 32ms        |
+| **Download Speed** | 89 Mbps | 89 Mbps | 92 Mbps         | 95 Mbps     |
+| **Upload Speed**   | 87 Mbps | 87 Mbps | 91 Mbps         | 94 Mbps     |
+| **Ping**           | 28ms    | 28ms    | 26ms            | 25ms        |
+| **Jitter**         | 8ms     | 7ms     | 3ms             | 2ms         |
 
 **Kesimpulan:**
+
 ```
 ✅ Bandwidth sama (limited by VPN server, bukan DNS)
 ⚡ Initial connection domain berbayar 3-5x lebih cepat
@@ -343,6 +364,7 @@ Dengan DNSSEC:
 #### **Budget Rp 0 (Gratis Total)**
 
 **Option 1: Workers.dev Only (Recommended!)**
+
 ```
 Domain: jhopan.workers.dev
 Performa: ⭐⭐⭐⭐⭐ (5/5)
@@ -361,6 +383,7 @@ Cons:
 ```
 
 **Option 2: DuckDNS**
+
 ```
 Domain: jhopan.duckdns.org
 Performa: ⭐⭐⭐ (3/5)
@@ -380,6 +403,7 @@ Cons:
 ```
 
 **Option 3: eu.org**
+
 ```
 Domain: jhopan.eu.org
 Performa: ⭐⭐⭐ (3/5)
@@ -403,6 +427,7 @@ Cons:
 #### **Budget Rp 150.000/tahun**
 
 **Recommended: Porkbun/Namecheap .com**
+
 ```
 Domain: jhopan.com
 Performa: ⭐⭐⭐⭐⭐ (5/5)
@@ -428,6 +453,7 @@ Cons:
 ### 🔗 Link Langsung - Domain Gratis
 
 #### **DuckDNS (Instant, Recommended untuk Pemula)**
+
 - 🌐 **Website:** [https://www.duckdns.org](https://www.duckdns.org)
 - 📝 **Cara Daftar:** Login Google/GitHub → Create subdomain
 - ⏱️ **Setup Time:** 1 menit
@@ -436,6 +462,7 @@ Cons:
 - 📊 **Performance:** 3/5
 
 **Quick Setup:**
+
 ```
 1. Klik: https://www.duckdns.org
 2. Sign in with Google
@@ -447,6 +474,7 @@ Cons:
 ---
 
 #### **eu.org (Professional, Free .org Domain)**
+
 - 🌐 **Website:** [https://nic.eu.org](https://nic.eu.org/arf/en/contact/create/)
 - 📝 **Cara Daftar:** Register → Request domain → Tunggu approval
 - ⏱️ **Setup Time:** 1-2 minggu (approval)
@@ -455,6 +483,7 @@ Cons:
 - 📊 **Performance:** 3/5
 
 **Quick Setup:**
+
 ```
 1. Klik: https://nic.eu.org/arf/en/contact/create/
 2. Create account (isi email, nama, alamat)
@@ -469,6 +498,7 @@ Cons:
 ---
 
 #### **FreeDNS / Afraid.org (Instant, Many Options)**
+
 - 🌐 **Website:** [https://freedns.afraid.org](https://freedns.afraid.org/signup/)
 - 📝 **Cara Daftar:** Register → Add subdomain
 - ⏱️ **Setup Time:** Instant
@@ -477,6 +507,7 @@ Cons:
 - 📊 **Performance:** 3/5
 
 **Quick Setup:**
+
 ```
 1. Klik: https://freedns.afraid.org/signup/
 2. Register (username, email, password)
@@ -492,6 +523,7 @@ Cons:
 ---
 
 #### **No-IP (Dynamic DNS, 30 Days Free)**
+
 - 🌐 **Website:** [https://www.noip.com/sign-up](https://www.noip.com/sign-up)
 - 📝 **Cara Daftar:** Register → Create hostname
 - ⏱️ **Setup Time:** Instant
@@ -500,6 +532,7 @@ Cons:
 - 📊 **Performance:** 2/5
 
 **Quick Setup:**
+
 ```
 1. Klik: https://www.noip.com/sign-up
 2. Email → Verify
@@ -519,6 +552,7 @@ Cons:
 ### 🔗 Link Langsung - Domain Berbayar (Recommended!)
 
 #### **Porkbun (Cheapest .com - $9.13/tahun)**
+
 - 🌐 **Website:** [https://porkbun.com](https://porkbun.com)
 - 💰 **Harga .com:** $9.13/tahun (~Rp 140.000)
 - 💰 **Harga .org:** $8.67/tahun
@@ -528,6 +562,7 @@ Cons:
 - 📊 **Performance:** 5/5
 
 **Quick Buy:**
+
 ```
 1. Klik: https://porkbun.com
 2. Search: jhopan.com
@@ -538,6 +573,7 @@ Cons:
 ```
 
 **Setup Cloudflare:**
+
 ```
 7. Cloudflare → Add site → jhopan.com
 8. Copy nameservers:
@@ -551,6 +587,7 @@ Cons:
 ---
 
 #### **Namecheap (Popular - $13.98/tahun)**
+
 - 🌐 **Website:** [https://www.namecheap.com](https://www.namecheap.com)
 - 💰 **Harga .com:** $13.98/tahun pertama (~Rp 215.000)
 - 💰 **Renewal:** $15.98/tahun
@@ -559,6 +596,7 @@ Cons:
 - 📊 **Performance:** 5/5
 
 **Quick Buy:**
+
 ```
 1. Klik: https://www.namecheap.com
 2. Search domain: jhopan.com
@@ -570,12 +608,14 @@ Cons:
 ```
 
 **Promo Code:**
+
 - `NEWCOM598` → .com $5.98 (tahun pertama)
 - Cek: https://www.namecheap.com/promos/coupons/
 
 ---
 
 #### **Cloudflare Registrar (At-Cost - $9.77/tahun)**
+
 - 🌐 **Website:** [https://www.cloudflare.com/products/registrar/](https://www.cloudflare.com/products/registrar/)
 - 💰 **Harga .com:** $9.77/tahun (wholesale price, no markup!)
 - 💰 **Harga .org:** $9.93/tahun
@@ -584,6 +624,7 @@ Cons:
 - 📊 **Performance:** 5/5
 
 **Quick Buy:**
+
 ```
 1. Daftar Cloudflare: https://dash.cloudflare.com/sign-up
 2. Domain → Register domain
@@ -599,6 +640,7 @@ Cons:
 ---
 
 #### **Niagahoster (Indonesia - Rp 120.000/tahun)**
+
 - 🌐 **Website:** [https://www.niagahoster.co.id](https://www.niagahoster.co.id/domain-murah)
 - 💰 **Harga .com:** Rp 120.000 - 150.000/tahun
 - 💰 **Harga .id:** Rp 200.000/tahun
@@ -607,6 +649,7 @@ Cons:
 - 📊 **Performance:** 4/5
 
 **Quick Buy:**
+
 ```
 1. Klik: https://www.niagahoster.co.id/domain-murah
 2. Cek domain: jhopan.com
@@ -625,6 +668,7 @@ Cons:
 ### 🏆 Rekomendasi Final
 
 **Untuk Belajar/Testing:**
+
 ```
 ✅ Cloudflare Workers.dev
    - Free forever
@@ -634,6 +678,7 @@ Cons:
 ```
 
 **Untuk Personal/Hobby (Budget Rp 0):**
+
 ```
 ✅ DuckDNS
    - https://www.duckdns.org
@@ -643,6 +688,7 @@ Cons:
 ```
 
 **Untuk Serius/Production (Budget Rp 150k/tahun):**
+
 ```
 ✅ Cloudflare Registrar (.com $9.77/tahun)
    - https://www.cloudflare.com/products/registrar/
@@ -653,6 +699,7 @@ Cons:
 ```
 
 **Untuk di Indonesia (Bayar e-wallet):**
+
 ```
 ✅ Niagahoster (.com Rp 120k/tahun)
    - https://www.niagahoster.co.id
@@ -668,22 +715,26 @@ Cons:
 #### **Domain Gratis:**
 
 **DuckDNS:**
+
 - ✅ **Unlimited** selama masih login tiap 30 hari
 - ⚠️ Jika tidak login 30 hari → domain hangus
 - 🔄 Renewal: Otomatis (asal masih login)
 
 **eu.org:**
+
 - ✅ **1 tahun** gratis
 - 🔄 Renewal: Manual, perpanjang 30 hari sebelum expire
 - ⚠️ Jika telat → domain bisa diambil orang lain
 - 💡 Bisa perpanjang unlimited kali
 
 **FreeDNS/Afraid.org:**
+
 - ✅ **Unlimited** (selama akun aktif)
 - ⚠️ Jika tidak login 6 bulan → domain dihapus
 - 🔄 Renewal: Otomatis
 
 **No-IP:**
+
 - ✅ **30 hari** free
 - ⚠️ Harus confirm email setiap 30 hari
 - 🔄 Renewal: Klik link di email (ribet!)
@@ -692,6 +743,7 @@ Cons:
 #### **Domain Berbayar:**
 
 **Namecheap/Porkbun/Cloudflare Registrar:**
+
 - ✅ **1 tahun** (bisa beli multi-tahun)
 - 🔄 Auto-renewal: ON by default
 - 💳 Charge kartu kredit otomatis setiap tahun
@@ -699,6 +751,7 @@ Cons:
 - ⚠️ Grace period: 30-45 hari setelah expire
 
 #### **Cloudflare Workers.dev:**
+
 - ✅ **UNLIMITED** - No expiry!
 - 🔄 Renewal: Tidak perlu
 - ⚠️ Batasan: 100.000 request/hari (free plan)
@@ -711,6 +764,7 @@ Cons:
 #### **Skenario 1: Domain Gratis Expire**
 
 **Dampak:**
+
 ```
 User buka: vpn.jhopan.duckdns.org
 Browser: ❌ DNS_PROBE_FINISHED_NXDOMAIN
@@ -721,6 +775,7 @@ VPN: ❌ Config tidak bisa connect
 **Solusi:**
 
 **Option A: Perpanjang Domain (jika masih bisa)**
+
 ```bash
 1. Login ke DuckDNS/eu.org/FreeDNS
 2. Renew/Update domain
@@ -729,6 +784,7 @@ VPN: ❌ Config tidak bisa connect
 ```
 
 **Option B: Ganti Domain Baru**
+
 ```bash
 1. Daftar domain baru: jhopan2.duckdns.org
 2. Update Cloudflare Workers route
@@ -739,6 +795,7 @@ VPN: ❌ Config tidak bisa connect
 ```
 
 **Option C: Pakai Workers.dev Aja (Recommended!)**
+
 ```python
 # Ubah bot config jadi:
 WORKER_DOMAIN = "jhopan.workers.dev"  # No expire!
@@ -747,6 +804,7 @@ WORKER_DOMAIN = "jhopan.workers.dev"  # No expire!
 #### **Skenario 2: Domain Berbayar Expire**
 
 **Timeline:**
+
 ```
 Day 0: Expiry date
 Day 1-30: Grace period (domain masih jalan, tapi bisa diperpanjang)
@@ -755,6 +813,7 @@ Day 61+: Domain available untuk umum (orang lain bisa beli!)
 ```
 
 **Email notification:**
+
 - Day -30: "Domain akan expire 30 hari lagi"
 - Day -7: "Domain akan expire 7 hari lagi"
 - Day 0: "Domain expired!"
@@ -762,6 +821,7 @@ Day 61+: Domain available untuk umum (orang lain bisa beli!)
 - Day 30: "Domain entering redemption"
 
 **Solusi:**
+
 ```bash
 # Langsung perpanjang di registrar
 1. Login ke Namecheap/Porkbun
@@ -778,6 +838,7 @@ Day 61+: Domain available untuk umum (orang lain bisa beli!)
 **JAWABAN: YA, TAPI TERGANTUNG!**
 
 **Skenario Aman (Low Risk):**
+
 ```
 Domain: jhopan.com
 ├── vpn.jhopan.com        → VPN worker (Cloudflare proxy ON)
@@ -787,12 +848,14 @@ Domain: jhopan.com
 ```
 
 ✅ **AMAN karena:**
+
 - Cloudflare proxy ON (hide real IP)
 - Traffic terpisah per subdomain
 - VPN traffic tidak kentara (HTTPS biasa)
 - Cloudflare ToS allow VPN proxy
 
 **Skenario Bahaya (High Risk):**
+
 ```
 Domain: jhopan.com (used for ecommerce/business)
 ├── www.jhopan.com        → Toko online (revenue tinggi)
@@ -801,6 +864,7 @@ Domain: jhopan.com (used for ecommerce/business)
 ```
 
 ⚠️ **BAHAYA karena:**
+
 - Jika VPN kena abuse report → domain bisa disuspend
 - Domain utama down = toko online down = loss revenue!
 - Reputasi domain rusak
@@ -808,6 +872,7 @@ Domain: jhopan.com (used for ecommerce/business)
 #### **Yang Bisa Bikin Domain Kena Banned:**
 
 **1. Abuse Reports**
+
 ```
 User VPN → Download torrent ilegal → ISP complain ke Cloudflare
 → Cloudflare suspend worker → Domain masih aman
@@ -816,12 +881,14 @@ TAPI jika report berulang → Cloudflare bisa suspend akun!
 ```
 
 **2. Excessive Traffic**
+
 ```
 Free plan Cloudflare: Unlimited bandwidth (tapi ada fair use)
 Jika traffic "tidak wajar" → Cloudflare minta upgrade ke paid
 ```
 
 **3. Violate ToS**
+
 ```
 ❌ JANGAN:
 - Hosting malware/phishing
@@ -836,6 +903,7 @@ Jika traffic "tidak wajar" → Cloudflare minta upgrade ke paid
 ```
 
 **4. Domain Reputation**
+
 ```
 Jika banyak user laporkan domain ke Google Safe Browsing
 → Domain masuk blacklist
@@ -849,6 +917,7 @@ Jika banyak user laporkan domain ke Google Safe Browsing
 #### **Use Case 1: Domain Utama untuk Bisnis/Blog + VPN**
 
 **❌ JANGAN:**
+
 ```
 bisnisku.com
 ├── www.bisnisku.com    → Toko online
@@ -856,6 +925,7 @@ bisnisku.com
 ```
 
 **✅ LAKUKAN:**
+
 ```
 bisnisku.com            → Toko online
 vpn-jhopan.duckdns.org  → VPN (pisah domain!)
@@ -867,6 +937,7 @@ jhopan.workers.dev      → VPN (paling aman!)
 ```
 
 **Alasan:**
+
 - Jika VPN bermasalah, bisnis tetap aman
 - Domain bisnis reputasi terjaga
 - Minimal risk
@@ -876,6 +947,7 @@ jhopan.workers.dev      → VPN (paling aman!)
 #### **Use Case 2: Satu Domain untuk Semua (Personal)**
 
 **✅ BOLEH (tapi hati-hati):**
+
 ```
 jhopan.com
 ├── blog.jhopan.com      → Personal blog
@@ -885,6 +957,7 @@ jhopan.com
 ```
 
 **Syarat:**
+
 1. ✅ Domain tidak untuk bisnis/revenue
 2. ✅ VPN untuk personal use (max 10-20 user)
 3. ✅ No illegal content
@@ -892,6 +965,7 @@ jhopan.com
 5. ✅ Backup plan (domain cadangan siap)
 
 **Backup Plan:**
+
 ```python
 # Di bot, siapkan fallback domain
 WORKER_DOMAINS = [
@@ -914,10 +988,11 @@ for domain in WORKER_DOMAINS:
 **❌ JANGAN pakai domain utama!**
 
 **✅ LAKUKAN:**
+
 ```
 Option A: Multiple free domains
 - vpn1.duckdns.org
-- vpn2.mooo.com  
+- vpn2.mooo.com
 - vpn3.eu.org
 
 Option B: Cheap domain khusus VPN
@@ -928,6 +1003,7 @@ Option C: Workers.dev only
 ```
 
 **Alasan:**
+
 - High traffic → risk tinggi
 - Jika banned, domain lain masih jalan
 - Easy to replace
@@ -937,12 +1013,14 @@ Option C: Workers.dev only
 ### 🛡️ Cara Protect Domain Utama
 
 #### **1. Gunakan Subdomain Khusus**
+
 ```
 Jangan: jhopan.com/vpn
 Pakai: vpn.jhopan.com
 ```
 
 #### **2. Cloudflare Proxy ON**
+
 ```
 DNS Record:
 vpn.jhopan.com → 192.0.2.1 (dummy IP)
@@ -950,33 +1028,37 @@ Proxy: ☁️ ON (orange cloud)
 ```
 
 **Benefit:**
+
 - Real IP tersembunyi
 - Cloudflare filter traffic
 - DDoS protection auto
 
 #### **3. Rate Limiting**
+
 ```javascript
 // Di _worker.js, tambahkan:
 const RATE_LIMIT = {
-  perIP: 100,        // Max 100 req/menit per IP
-  perDomain: 10000   // Max 10k req/menit total
+  perIP: 100, // Max 100 req/menit per IP
+  perDomain: 10000, // Max 10k req/menit total
 };
 ```
 
 #### **4. Whitelist IP (Optional)**
+
 ```javascript
 // Hanya allow IP tertentu
 const ALLOWED_IPS = [
-  "1.2.3.4",      // IP rumah
-  "5.6.7.8"       // IP kantor
+  "1.2.3.4", // IP rumah
+  "5.6.7.8", // IP kantor
 ];
 
-if (!ALLOWED_IPS.includes(request.headers.get('cf-connecting-ip'))) {
-  return new Response('Forbidden', { status: 403 });
+if (!ALLOWED_IPS.includes(request.headers.get("cf-connecting-ip"))) {
+  return new Response("Forbidden", { status: 403 });
 }
 ```
 
 #### **5. Monitor Traffic**
+
 ```bash
 # Cloudflare Dashboard → Analytics
 - Lihat request/day
@@ -987,6 +1069,7 @@ Jika ada spike tidak wajar → Investigate!
 ```
 
 #### **6. Separate Cloudflare Account**
+
 ```
 Account A: Domain bisnis (bisnisku.com)
 Account B: Domain VPN (vpn-jhopan.com)
@@ -999,6 +1082,7 @@ Jika Account B suspended → Account A aman!
 ### 📊 Perhitungan Biaya (1 Tahun)
 
 #### **Setup A: Full Gratis**
+
 ```
 Domain: DuckDNS (Free)
 Worker: Cloudflare Free (100k req/day)
@@ -1012,6 +1096,7 @@ Limitation:
 ```
 
 #### **Setup B: Semi-Pro (Recommended)**
+
 ```
 Domain: Porkbun .com ($10/tahun = Rp 150.000)
 Worker: Cloudflare Free
@@ -1025,6 +1110,7 @@ Benefit:
 ```
 
 #### **Setup C: Enterprise**
+
 ```
 Domain: Cloudflare Registrar .com ($9/tahun)
 Worker: Cloudflare Paid ($5/month = $60/tahun)
@@ -1043,6 +1129,7 @@ Benefit:
 ### ✅ Kesimpulan & Rekomendasi
 
 **Untuk Pemula / Personal Use:**
+
 ```
 ✅ Pakai: jhopan.workers.dev
 - No domain needed
@@ -1052,6 +1139,7 @@ Benefit:
 ```
 
 **Untuk Hobby / 10-50 Users:**
+
 ```
 ✅ Domain gratis: DuckDNS/eu.org
 - Set reminder perpanjang tiap bulan
@@ -1060,6 +1148,7 @@ Benefit:
 ```
 
 **Untuk Serius / 100+ Users:**
+
 ```
 ✅ Domain berbayar: Porkbun/Namecheap ($10/tahun)
 - Auto-renew ON
@@ -1068,6 +1157,7 @@ Benefit:
 ```
 
 **Untuk Bisnis / Domain Utama Penting:**
+
 ```
 ✅ PISAHKAN DOMAIN!
 Domain bisnis: bisnisku.com → Jangan sentuh!
@@ -1180,6 +1270,7 @@ wrangler deploy
 ```
 
 **Hasil:**
+
 ```
 Deployed jhopan to jhopan.workers.dev
 ```
@@ -1200,12 +1291,14 @@ Deployed jhopan to jhopan.workers.dev
 Jika pakai domain sendiri (eu.org, mooo.com, dll):
 
 1. **Add domain ke Cloudflare**:
+
    - Dashboard → Add site
    - Masukkan domain: `jhopan.eu.org`
    - Plan: Free
    - Cloudflare akan kasih nameservers
 
 2. **Update nameservers**:
+
    - Copy NS dari Cloudflare:
      ```
      cary.ns.cloudflare.com
@@ -1244,6 +1337,7 @@ const SUB_PAGE_URL = "https://vpn.jhopan.eu.org";
 ```
 
 **Penjelasan:**
+
 - Ini adalah URL halaman web yang akan dibuka user untuk copy config
 - Ketika user akses `https://jhopan.workers.dev/sub` → redirect ke SUB_PAGE_URL
 - Bisa pakai GitHub Pages atau domain custom
@@ -1251,37 +1345,42 @@ const SUB_PAGE_URL = "https://vpn.jhopan.eu.org";
 ### 3.2 Setup GitHub Pages (Untuk SUB_PAGE_URL)
 
 1. **Buat file `index.html`** di repo:
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Jhopan VPN Config</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>🚀 Jhopan VPN</h1>
     <p>Get your VPN configuration via Telegram Bot!</p>
     <a href="https://t.me/YOUR_BOT_USERNAME">@YourBotUsername</a>
-</body>
+  </body>
 </html>
 ```
 
 2. **Enable GitHub Pages**:
+
    - Repo Settings → Pages
    - Source: Deploy from main branch
    - Folder: / (root)
    - Save
 
 3. **URL akan jadi:**
+
 ```
 https://jhopan.github.io/Wokers-Jhopan
 ```
 
-4. **Update _worker.js**:
+4. **Update \_worker.js**:
+
 ```javascript
 const SUB_PAGE_URL = "https://jhopan.github.io/Wokers-Jhopan";
 ```
 
 5. **Deploy ulang worker**:
+
 ```bash
 wrangler deploy
 ```
@@ -1289,13 +1388,17 @@ wrangler deploy
 ### 3.3 Verifikasi Proxy Lists
 
 File sudah tersedia:
+
 - ✅ `kvProxyList.json` - 51 negara, 316+ proxy
 - ✅ `proxyList.txt` - Backup list
 
 URLs sudah benar:
+
 ```javascript
-const KV_PRX_URL = "https://raw.githubusercontent.com/jhopan/Wokers-Jhopan/refs/heads/main/kvProxyList.json";
-const PRX_BANK_URL = "https://raw.githubusercontent.com/jhopan/Wokers-Jhopan/refs/heads/main/proxyList.txt";
+const KV_PRX_URL =
+  "https://raw.githubusercontent.com/jhopan/Wokers-Jhopan/refs/heads/main/kvProxyList.json";
+const PRX_BANK_URL =
+  "https://raw.githubusercontent.com/jhopan/Wokers-Jhopan/refs/heads/main/proxyList.txt";
 ```
 
 **✅ Sudah auto dari GitHub repo!**
@@ -1315,12 +1418,14 @@ const PRX_BANK_URL = "https://raw.githubusercontent.com/jhopan/Wokers-Jhopan/ref
 ### 4.2 Install Dependencies (PC/VPS)
 
 **Windows:**
+
 ```bash
 cd telegram-bot
 pip install -r requirements.txt
 ```
 
 **Linux/VPS:**
+
 ```bash
 cd telegram-bot
 pip3 install -r requirements.txt
@@ -1329,11 +1434,13 @@ pip3 install -r requirements.txt
 ### 4.3 Konfigurasi Bot
 
 **Cara A: Via Setup Script**
+
 ```bash
 python setup.py
 ```
 
 Isi:
+
 ```
 1. Telegram Bot Token: 1234567890:ABC...
 2. Worker Domain: jhopan.workers.dev
@@ -1343,12 +1450,14 @@ Isi:
 **Cara B: Manual Edit**
 
 Buat file `.env`:
+
 ```env
 TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHI...
 WORKER_DOMAIN=jhopan.workers.dev
 ```
 
 Atau edit langsung `telegram-bot.py` line 18:
+
 ```python
 TELEGRAM_BOT_TOKEN = "YOUR_TOKEN_HERE"
 WORKER_DOMAIN = "jhopan.workers.dev"  # atau custom domain
@@ -1361,6 +1470,7 @@ python test_worker.py jhopan.workers.dev
 ```
 
 Output yang diharapkan:
+
 ```
 ✅ Worker Alive
 ✅ API Endpoint
@@ -1375,6 +1485,7 @@ python telegram-bot.py
 ```
 
 Output:
+
 ```
 Bot started successfully!
 Bot username: @jhopan_vpn_bot
@@ -1404,11 +1515,13 @@ Press Ctrl+C to stop
 ### 5.2 Test Config di V2Ray/Clash
 
 **V2RayN (Windows):**
+
 1. Copy config
 2. Paste di V2RayN → Add server from clipboard
 3. Connect
 
 **Clash (Android/iOS):**
+
 1. Copy config URL
 2. Import ke Clash
 3. Connect
@@ -1423,6 +1536,7 @@ Press Ctrl+C to stop
 
 1. **Domain** → DNS Settings
 2. **Add A Record**:
+
    ```
    Type: A
    Name: vpn (atau @)
@@ -1431,6 +1545,7 @@ Press Ctrl+C to stop
    ```
 
 3. **Worker Routes**:
+
    - Workers → jhopan → Triggers
    - Add route: `vpn.jhopan.eu.org/*`
    - Select worker: jhopan
@@ -1459,6 +1574,7 @@ wrangler deploy --name jhopan3
 ```
 
 Update bot untuk random select:
+
 ```python
 import random
 
@@ -1478,6 +1594,7 @@ WORKER_DOMAIN = random.choice(workers)
 ### 1. Environment Variables
 
 Jangan hardcode token di code:
+
 ```python
 # ❌ JANGAN:
 TELEGRAM_BOT_TOKEN = "123456:ABC..."
@@ -1490,6 +1607,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 ### 2. Rate Limiting
 
 Tambahkan di worker untuk anti-spam:
+
 ```javascript
 // Di _worker.js, tambahkan rate limit
 const RATE_LIMIT = 100; // request per menit
@@ -1502,6 +1620,7 @@ Pastikan semua domain pakai HTTPS (auto dari Cloudflare)
 ### 4. Bot Commands Whitelist
 
 Batasi user yang bisa pakai bot:
+
 ```python
 ALLOWED_USERS = [123456789, 987654321]  # User IDs
 
@@ -1516,11 +1635,13 @@ if update.effective_user.id not in ALLOWED_USERS:
 ### Bot tidak respon
 
 **Cek:**
+
 1. Token benar? Test: `curl https://api.telegram.org/bot<TOKEN>/getMe`
 2. Bot jalan? Lihat terminal ada error?
 3. Internet PC/VPS lancar?
 
 **Fix:**
+
 ```bash
 # Restart bot
 Ctrl+C
@@ -1530,6 +1651,7 @@ python telegram-bot.py
 ### Worker error 500
 
 **Cek:**
+
 1. Deploy sukses? `wrangler deploy`
 2. Code error? Lihat logs: `wrangler tail`
 3. Proxy list error? Test URL:
@@ -1538,6 +1660,7 @@ python telegram-bot.py
    ```
 
 **Fix:**
+
 ```bash
 # Deploy ulang
 wrangler deploy --force
@@ -1546,17 +1669,20 @@ wrangler deploy --force
 ### Config tidak work di V2Ray
 
 **Cek:**
+
 1. Format config benar?
 2. Server proxy masih hidup? (Proxy bisa mati kapan saja)
 3. Coba negara lain
 
 **Fix:**
+
 - Ganti server: Pilih negara lain di bot
 - Update proxy list: Edit `kvProxyList.json`
 
 ### Domain tidak resolve
 
 **Cek:**
+
 ```bash
 # Test DNS
 nslookup jhopan.mooo.com
@@ -1566,12 +1692,14 @@ ping jhopan.workers.dev
 ```
 
 **Fix:**
+
 - Tunggu DNS propagation (up to 48 jam)
 - Clear DNS cache:
+
   ```bash
   # Windows
   ipconfig /flushdns
-  
+
   # Linux
   sudo systemd-resolve --flush-caches
   ```
@@ -1606,11 +1734,13 @@ tail -f bot.log
 ### Run Bot as Service (Linux)
 
 1. **Buat systemd service**:
+
 ```bash
 sudo nano /etc/systemd/system/jhopan-bot.service
 ```
 
 2. **Isi**:
+
 ```ini
 [Unit]
 Description=Jhopan VPN Telegram Bot
@@ -1629,6 +1759,7 @@ WantedBy=multi-user.target
 ```
 
 3. **Enable & start**:
+
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable jhopan-bot
@@ -1636,6 +1767,7 @@ sudo systemctl start jhopan-bot
 ```
 
 4. **Check status**:
+
 ```bash
 sudo systemctl status jhopan-bot
 ```
@@ -1648,15 +1780,15 @@ Service sudah include `Restart=always`, jadi bot auto restart jika crash.
 
 ## 🎯 Ringkasan URL
 
-| Komponen | URL | Fungsi |
-|----------|-----|--------|
-| **Worker** | `jhopan.workers.dev` | VPN tunneling endpoint |
-| **Custom Domain** | `jhopan.mooo.com` | Alternative worker URL |
-| **Sub Page** | `jhopan.github.io/Wokers-Jhopan` | Web interface |
-| **API** | `jhopan.workers.dev/api/v1/sub` | Bot fetch config |
-| **Proxy KV** | `github.com/.../kvProxyList.json` | Country proxy list |
-| **Proxy Bank** | `github.com/.../proxyList.txt` | Full proxy list |
-| **Telegram Bot** | `@jhopan_vpn_bot` | User interface |
+| Komponen          | URL                               | Fungsi                 |
+| ----------------- | --------------------------------- | ---------------------- |
+| **Worker**        | `jhopan.workers.dev`              | VPN tunneling endpoint |
+| **Custom Domain** | `jhopan.mooo.com`                 | Alternative worker URL |
+| **Sub Page**      | `jhopan.github.io/Wokers-Jhopan`  | Web interface          |
+| **API**           | `jhopan.workers.dev/api/v1/sub`   | Bot fetch config       |
+| **Proxy KV**      | `github.com/.../kvProxyList.json` | Country proxy list     |
+| **Proxy Bank**    | `github.com/.../proxyList.txt`    | Full proxy list        |
+| **Telegram Bot**  | `@jhopan_vpn_bot`                 | User interface         |
 
 ---
 

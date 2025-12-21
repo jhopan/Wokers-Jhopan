@@ -629,10 +629,14 @@
         // Try API first, fallback to manual conversion
         try {
           // Try using worker's own API endpoint first
-          const workerApiUrl = `https://${workerDomain}/api/v1/sub?cc=${server.country}&vpn=${document.getElementById("protocol").value}&port=${port}&limit=50&format=${format}`;
-          
+          const workerApiUrl = `https://${workerDomain}/api/v1/sub?cc=${
+            server.country
+          }&vpn=${
+            document.getElementById("protocol").value
+          }&port=${port}&limit=50&format=${format}`;
+
           const workerResponse = await fetch(workerApiUrl);
-          
+
           if (workerResponse.ok) {
             const convertedConfig = await workerResponse.text();
             document.getElementById("configResult").value = convertedConfig;
@@ -647,8 +651,9 @@
           const manualConverted = manualConvert(server.config, format);
           document.getElementById("configResult").value = manualConverted;
         } catch (error) {
-          document.getElementById("configResult").value = 
-            `Conversion failed: ${error.message}\n\nRaw config:\n${server.config}`;
+          document.getElementById(
+            "configResult"
+          ).value = `Conversion failed: ${error.message}\n\nRaw config:\n${server.config}`;
         }
       }
 
@@ -660,7 +665,7 @@
         const server = url.hostname;
         const port = url.port;
         const hash = decodeURIComponent(url.hash.replace("#", ""));
-        
+
         // Get params
         const params = new URLSearchParams(url.search);
         const type = params.get("type") || "ws";
@@ -672,22 +677,55 @@
 
         switch (format) {
           case "clash":
-            return generateClashYAML(protocol, hash, server, port, uuid, type, path, host, security, sni);
-          
+            return generateClashYAML(
+              protocol,
+              hash,
+              server,
+              port,
+              uuid,
+              type,
+              path,
+              host,
+              security,
+              sni
+            );
+
           case "v2ray":
             return btoa(rawConfig);
-          
+
           case "sfa":
-            return generateSingBox(protocol, hash, server, port, uuid, type, path, host, security, sni);
-          
+            return generateSingBox(
+              protocol,
+              hash,
+              server,
+              port,
+              uuid,
+              type,
+              path,
+              host,
+              security,
+              sni
+            );
+
           default:
             return rawConfig;
         }
       }
 
-      function generateClashYAML(protocol, name, server, port, uuid, netType, path, host, security, sni) {
+      function generateClashYAML(
+        protocol,
+        name,
+        server,
+        port,
+        uuid,
+        netType,
+        path,
+        host,
+        security,
+        sni
+      ) {
         const tls = security === "tls";
-        
+
         if (protocol === "vless") {
           return `proxies:
   - name: ${name}
@@ -735,45 +773,60 @@
       host: ${host}
       path: ${path}`;
         }
-        
+
         return "Unsupported protocol for Clash";
       }
 
-      function generateSingBox(protocol, name, server, port, uuid, netType, path, host, security, sni) {
+      function generateSingBox(
+        protocol,
+        name,
+        server,
+        port,
+        uuid,
+        netType,
+        path,
+        host,
+        security,
+        sni
+      ) {
         const tls = security === "tls";
-        
+
         const config = {
-          outbounds: [{
-            type: protocol === "ss" ? "shadowsocks" : protocol,
-            tag: name,
-            server: server,
-            server_port: parseInt(port)
-          }]
+          outbounds: [
+            {
+              type: protocol === "ss" ? "shadowsocks" : protocol,
+              tag: name,
+              server: server,
+              server_port: parseInt(port),
+            },
+          ],
         };
 
         if (protocol === "vless") {
           config.outbounds[0].uuid = uuid;
-          config.outbounds[0].tls = tls ? {
-            enabled: true,
-            server_name: sni,
-            insecure: true
-          } : undefined;
+          config.outbounds[0].tls = tls
+            ? {
+                enabled: true,
+                server_name: sni,
+                insecure: true,
+              }
+            : undefined;
           config.outbounds[0].transport = {
             type: netType,
             path: path,
-            headers: { Host: host }
+            headers: { Host: host },
           };
         } else if (protocol === "trojan") {
           config.outbounds[0].password = uuid;
           config.outbounds[0].tls = {
             enabled: true,
             server_name: sni,
-            insecure: true
+            insecure: true,
           };
           config.outbounds[0].transport = {
             type: netType,
             path: path,
-            headers: { Host: host }
+            headers: { Host: host },
           };
         }
 

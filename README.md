@@ -82,19 +82,74 @@ wrangler deploy
 5. **Save**  Tunggu 2-3 menit
 6. Akses di `https://username.github.io/repository-name`
 
-### 4 Setup Telegram Bot (Opsional)
+### 4️⃣ Setup Telegram Bot (Opsional)
+
+#### **Linux/macOS:**
 
 ```bash
 cd telegram-bot
 
+# Run automatic installer
+chmod +x install.sh
+./install.sh
+
+# Setup .env file
+cp .env.example .env
+nano .env  # Edit dan tambahkan BOT_TOKEN
+
+# Run bot
+./run.sh
+```
+
+#### **Windows:**
+
+```cmd
+cd telegram-bot
+
+# Run automatic installer
+install.bat
+
+# Setup .env file
+copy .env.example .env
+notepad .env  # Edit dan tambahkan BOT_TOKEN
+
+# Run bot
+run.bat
+```
+
+#### **Manual Installation:**
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+
+# Activate (Linux/macOS)
+source venv/bin/activate
+
+# Activate (Windows)
+venv\Scripts\activate
+
 # Install dependencies
 pip install -r requirements.txt
 
-# Setup bot (interactive wizard)
-python setup.py
+# Setup .env
+cp .env.example .env
+# Edit .env and add your bot token
 
-# Jalankan bot
-python telegram-bot.py
+# Run bot
+python bot.py
+```
+
+#### **Setup Admin-Only Mode:**
+
+Edit file `.env`:
+
+```env
+# Admin-only mode: hanya admin yang bisa pakai bot
+ADMIN_ONLY=true
+
+# Telegram User ID admin (gunakan /myid untuk cek ID)
+ADMIN_IDS=123456789,987654321
 ```
 
 ---
@@ -119,10 +174,62 @@ const PRX_BANK_URL = "https://raw.githubusercontent.com/username/repository/main
 const workerDomain = urlParams.get("host") || "your-domain.com";
 ```
 
-**File: `telegram-bot/telegram-bot.py`**
+**File: `telegram-bot/bot.py`**
 
 ```python
-# Line 27: Update worker domain
+# Edit .env file
+WORKER_DOMAIN=your-domain.com
+```
+
+###  Disable Website (Hanya Telegram)
+
+Jika kamu ingin **non-aktifkan website** dan hanya pakai Telegram bot dengan admin-only:
+
+**1. Disable GitHub Pages:**
+- Repo Settings → Pages → Source: **None**
+- Website akan mati, hanya API worker yang jalan
+
+**2. Enable Admin-Only di Telegram Bot:**
+
+Edit `telegram-bot/.env`:
+
+```env
+# Hanya admin yang bisa akses bot
+ADMIN_ONLY=true
+
+# ID Telegram admin (cek dengan /myid di bot)
+ADMIN_IDS=123456789,987654321
+```
+
+**3. Optional - Password Protect Worker:**
+
+Edit `_worker.js`, tambahkan di awal function:
+
+```javascript
+// Line ~100, di function handleRequest
+async function handleRequest(request) {
+  const url = new URL(request.url);
+  
+  // Password protection
+  const authToken = url.searchParams.get('token');
+  const SECRET_TOKEN = "your-secret-token-here"; // Ganti ini
+  
+  if (authToken !== SECRET_TOKEN) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+  
+  // ... rest of code
+}
+```
+
+Lalu update bot untuk include token:
+
+```python
+# telegram-bot/bot.py - Line ~40
+API_BASE_URL = f"https://{WORKER_DOMAIN}/api/v1/sub?token=your-secret-token-here"
+```
+
+**Result:** Website mati ✅ | Telegram bot admin-only ✅ | API protected ✅
 WORKER_DOMAIN = "your-domain.com"
 ```
 
