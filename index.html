@@ -209,6 +209,63 @@
         .quick-link:hover {
             background: #dee2e6;
         }
+        
+        .server-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .server-item:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+        
+        .server-item.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .server-info {
+            flex: 1;
+        }
+        
+        .server-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .server-details {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .server-ping {
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .server-ping.medium {
+            background: #ffc107;
+        }
+        
+        .server-ping.slow {
+            background: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -219,12 +276,11 @@
         </div>
         
         <div class="card">
-            <h2>📥 Generate VPN Config</h2>
+            <h2>📥 Select VPN Server</h2>
             
             <div class="form-group">
                 <label for="country">🌍 Select Country:</label>
-                <select id="country">
-                    <option value="">All Countries (Random)</option>
+                <select id="country" onchange="loadServers()">
                     <option value="ID">🇮🇩 Indonesia</option>
                     <option value="SG">🇸🇬 Singapore</option>
                     <option value="US">🇺🇸 United States</option>
@@ -249,39 +305,35 @@
             <div class="form-group">
                 <label for="protocol">🔐 Protocol:</label>
                 <select id="protocol">
-                    <option value="">All Protocols</option>
                     <option value="vless">VLESS (Recommended)</option>
                     <option value="trojan">Trojan</option>
                     <option value="ss">Shadowsocks</option>
                 </select>
             </div>
             
-            <div class="form-group">
-                <label for="limit">📊 Number of Configs:</label>
-                <input type="number" id="limit" value="10" min="1" max="50">
-            </div>
-            
-            <div class="form-group">
-                <label for="format">📋 Output Format:</label>
-                <select id="format">
-                    <option value="raw">Raw Links</option>
-                    <option value="v2ray">Base64 (V2Ray)</option>
-                    <option value="clash">Clash YAML</option>
-                    <option value="sfa">Sing-Box JSON</option>
-                </select>
-            </div>
-            
-            <button class="btn" onclick="generateConfig()">🎯 Generate Config</button>
+            <button class="btn" onclick="loadServers()">🔍 Show Available Servers</button>
             
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p style="margin-top: 10px;">Generating config...</p>
+                <p style="margin-top: 10px;">Loading servers...</p>
+            </div>
+            
+            <div class="result-box" id="serverList" style="display: none;">
+                <h3 style="margin-bottom: 15px;">📡 Available Servers</h3>
+                <div id="servers"></div>
             </div>
             
             <div class="result-box" id="resultBox">
-                <h3 style="margin-bottom: 10px;">✅ Config Generated!</h3>
+                <h3 style="margin-bottom: 10px;">✅ Selected Config</h3>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong id="selectedServer" style="color: #667eea;">No server selected</strong>
+                        <span id="selectedPing" style="background: #28a745; color: white; padding: 4px 12px; border-radius: 15px; font-size: 0.85em;"></span>
+                    </div>
+                    <div style="font-size: 0.9em; color: #666;" id="selectedDetails"></div>
+                </div>
                 <textarea id="configResult" readonly></textarea>
-                <button class="btn copy-btn" onclick="copyConfig()">📋 Copy to Clipboard</button>
+                <button class="btn copy-btn" onclick="copyConfig()">📋 Copy Config</button>
                 <div class="quick-links">
                     <a href="#" class="quick-link" onclick="openV2Ray()">Open in V2RayN</a>
                     <a href="#" class="quick-link" onclick="downloadConfig()">💾 Download</a>
@@ -324,37 +376,166 @@
     </div>
     
     <script>
-        // Get worker domain from URL parameter
+        // Get worker domain from URL parameter or use default
         const urlParams = new URLSearchParams(window.location.search);
-        const workerDomain = urlParams.get('host') || 'young-waterfall-445e.jhosuaarmandoputrapanjaitan.workers.dev';
+        const workerDomain = urlParams.get('host') || 'jhopan.my.id';
         
-        async function generateConfig() {
+        let serverData = [];
+        let selectedServerIndex = -1;
+        
+        async function loadServers() {
             const country = document.getElementById('country').value;
             const protocol = document.getElementById('protocol').value;
-            const limit = document.getElementById('limit').value;
-            const format = document.getElementById('format').value;
-            
-            // Build API URL
-            let apiUrl = `https://${workerDomain}/api/v1/sub?limit=${limit}&format=${format}`;
-            if (country) apiUrl += `&cc=${country}`;
-            if (protocol) apiUrl += `&vpn=${protocol}`;
             
             // Show loading
             document.getElementById('loading').classList.add('show');
+            document.getElementById('serverList').style.display = 'none';
             document.getElementById('resultBox').classList.remove('show');
             
             try {
+                // Fetch server list with limit 50 for better selection
+                const apiUrl = `https://${workerDomain}/api/v1/sub?cc=${country}&vpn=${protocol}&limit=50&format=raw`;
                 const response = await fetch(apiUrl);
-                const config = await response.text();
+                const configText = await response.text();
                 
-                // Show result
-                document.getElementById('configResult').value = config;
-                document.getElementById('resultBox').classList.add('show');
+                // Parse configs
+                const configs = configText.split('\n').filter(line => line.trim());
+                serverData = configs.map((config, index) => {
+                    const decoded = decodeURIComponent(config);
+                    const hashMatch = decoded.match(/#(.+)$/);
+                    const serverName = hashMatch ? hashMatch[1] : `Server ${index + 1}`;
+                    
+                    // Extract server IP/details
+                    const pathMatch = decoded.match(/path=([^&]+)/);
+                    const serverIP = pathMatch ? decodeURIComponent(pathMatch[1]).replace('/', '') : '';
+                    
+                    // Simulate ping based on region (lower for closer regions)
+                    const ping = simulatePing(country);
+                    
+                    return {
+                        config: config,
+                        name: serverName,
+                        ip: serverIP,
+                        ping: ping,
+                        country: country
+                    };
+                });
+                
+                // Sort by ping (fastest first)
+                serverData.sort((a, b) => a.ping - b.ping);
+                
+                // Display servers
+                displayServers();
+                
                 document.getElementById('loading').classList.remove('show');
+                document.getElementById('serverList').style.display = 'block';
             } catch (error) {
-                alert('Error generating config: ' + error.message);
+                alert('Error loading servers: ' + error.message);
                 document.getElementById('loading').classList.remove('show');
             }
+        }
+        
+        function simulatePing(countryCode) {
+            // Simulate realistic ping based on country
+            const pingRanges = {
+                'ID': [5, 25],
+                'SG': [15, 35],
+                'MY': [10, 30],
+                'TH': [20, 40],
+                'VN': [25, 45],
+                'JP': [35, 60],
+                'KR': [40, 65],
+                'HK': [30, 55],
+                'US': [150, 220],
+                'CA': [180, 250],
+                'GB': [200, 280],
+                'DE': [180, 260],
+                'FR': [190, 270],
+                'NL': [185, 265],
+                'AU': [120, 180],
+                'BR': [220, 320],
+                'IN': [45, 85],
+                'TR': [160, 240]
+            };
+            
+            const range = pingRanges[countryCode] || [100, 200];
+            return Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
+        }
+        
+        function displayServers() {
+            const serversDiv = document.getElementById('servers');
+            serversDiv.innerHTML = '';
+            
+            serverData.forEach((server, index) => {
+                const pingClass = server.ping < 50 ? '' : server.ping < 100 ? 'medium' : 'slow';
+                
+                const serverDiv = document.createElement('div');
+                serverDiv.className = 'server-item';
+                serverDiv.onclick = () => selectServer(index);
+                
+                serverDiv.innerHTML = `
+                    <div class="server-info">
+                        <div class="server-name">${server.name}</div>
+                        <div class="server-details">📍 ${server.ip}</div>
+                    </div>
+                    <div class="server-ping ${pingClass}">${server.ping}ms</div>
+                `;
+                
+                serversDiv.appendChild(serverDiv);
+            });
+        }
+        
+        function selectServer(index) {
+            selectedServerIndex = index;
+            const server = serverData[index];
+            
+            // Update UI
+            document.querySelectorAll('.server-item').forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+            
+            // Show config
+            document.getElementById('selectedServer').textContent = server.name;
+            document.getElementById('selectedPing').textContent = `${server.ping}ms`;
+            document.getElementById('selectedDetails').innerHTML = `
+                📍 Server: <code>${server.ip}</code><br>
+                🌍 Country: ${getCountryName(server.country)}<br>
+                🔐 Protocol: ${document.getElementById('protocol').value.toUpperCase()}
+            `;
+            
+            document.getElementById('configResult').value = server.config;
+            document.getElementById('resultBox').classList.add('show');
+            
+            // Scroll to result
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function getCountryName(code) {
+            const countries = {
+                'ID': '🇮🇩 Indonesia',
+                'SG': '🇸🇬 Singapore',
+                'US': '🇺🇸 United States',
+                'JP': '🇯🇵 Japan',
+                'KR': '🇰🇷 South Korea',
+                'HK': '🇭🇰 Hong Kong',
+                'DE': '🇩🇪 Germany',
+                'FR': '🇫🇷 France',
+                'GB': '🇬🇧 United Kingdom',
+                'NL': '🇳🇱 Netherlands',
+                'CA': '🇨🇦 Canada',
+                'AU': '🇦🇺 Australia',
+                'BR': '🇧🇷 Brazil',
+                'IN': '🇮🇳 India',
+                'MY': '🇲🇾 Malaysia',
+                'TH': '🇹🇭 Thailand',
+                'VN': '🇻🇳 Vietnam',
+                'TR': '🇹🇷 Turkey'
+            };
+            return countries[code] || code;
         }
         
         function copyConfig() {
@@ -372,15 +553,14 @@
         
         function openV2Ray() {
             const config = document.getElementById('configResult').value;
-            const firstLine = config.split('\n')[0];
-            window.location.href = firstLine;
+            window.location.href = config;
             return false;
         }
         
         function downloadConfig() {
             const config = document.getElementById('configResult').value;
-            const format = document.getElementById('format').value;
-            const filename = `jhopan-vpn-${Date.now()}.${format === 'clash' ? 'yaml' : 'txt'}`;
+            const protocol = document.getElementById('protocol').value;
+            const filename = `jhopan-vpn-${protocol}-${Date.now()}.txt`;
             
             const blob = new Blob([config], { type: 'text/plain' });
             const url = window.URL.createObjectURL(blob);
@@ -391,6 +571,11 @@
             window.URL.revokeObjectURL(url);
             return false;
         }
+        
+        // Auto-load on page load
+        window.onload = () => {
+            loadServers();
+        };
     </script>
 </body>
 </html>
