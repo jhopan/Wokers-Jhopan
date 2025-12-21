@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>Jhopan VPN - Free VPN Configuration Generator</title>
@@ -623,31 +626,158 @@
           return;
         }
 
-        // Convert to other formats using converter API
+        // Try API first, fallback to manual conversion
         try {
-          const converterUrl = "https://api.foolvpn.web.id/convert";
+          // Try using worker's own API endpoint first
+          const workerApiUrl = `https://${workerDomain}/api/v1/sub?cc=${server.country}&vpn=${document.getElementById("protocol").value}&port=${port}&limit=50&format=${format}`;
           
-          const response = await fetch(converterUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              url: server.config,
-              format: format,
-              template: "cf"
-            })
-          });
-
-          if (response.ok) {
-            const convertedConfig = await response.text();
+          const workerResponse = await fetch(workerApiUrl);
+          
+          if (workerResponse.ok) {
+            const convertedConfig = await workerResponse.text();
             document.getElementById("configResult").value = convertedConfig;
-          } else {
-            document.getElementById("configResult").value = `Error: ${response.status} - ${response.statusText}\n\nTry using Raw format instead.`;
+            return;
           }
-        } catch (error) {
-          document.getElementById("configResult").value = `Conversion failed: ${error.message}\n\nRaw config:\n${server.config}`;
+        } catch (apiError) {
+          console.log("Worker API failed, trying manual conversion:", apiError);
         }
+
+        // Fallback: Manual conversion
+        try {
+          const manualConverted = manualConvert(server.config, format);
+          document.getElementById("configResult").value = manualConverted;
+        } catch (error) {
+          document.getElementById("configResult").value = 
+            `Conversion failed: ${error.message}\n\nRaw config:\n${server.config}`;
+        }
+      }
+
+      function manualConvert(rawConfig, format) {
+        // Parse raw link (vless://, trojan://, ss://)
+        const url = new URL(rawConfig);
+        const protocol = url.protocol.replace(":", "");
+        const uuid = url.username;
+        const server = url.hostname;
+        const port = url.port;
+        const hash = decodeURIComponent(url.hash.replace("#", ""));
+        
+        // Get params
+        const params = new URLSearchParams(url.search);
+        const type = params.get("type") || "ws";
+        const path = params.get("path") || "/";
+        const host = params.get("host") || server;
+        const security = params.get("security") || "none";
+        const sni = params.get("sni") || server;
+        const encryption = params.get("encryption") || "none";
+
+        switch (format) {
+          case "clash":
+            return generateClashYAML(protocol, hash, server, port, uuid, type, path, host, security, sni);
+          
+          case "v2ray":
+            return btoa(rawConfig);
+          
+          case "sfa":
+            return generateSingBox(protocol, hash, server, port, uuid, type, path, host, security, sni);
+          
+          default:
+            return rawConfig;
+        }
+      }
+
+      function generateClashYAML(protocol, name, server, port, uuid, netType, path, host, security, sni) {
+        const tls = security === "tls";
+        
+        if (protocol === "vless") {
+          return `proxies:
+  - name: ${name}
+    server: ${server}
+    type: vless
+    port: ${port}
+    uuid: ${uuid}
+    tls: ${tls}
+    skip-cert-verify: true
+    servername: ${sni}
+    network: ${netType}
+    ws-opts:
+      path: ${path}
+      headers:
+        Host: ${host}
+    udp: true`;
+        } else if (protocol === "trojan") {
+          return `proxies:
+  - name: ${name}
+    server: ${server}
+    type: trojan
+    port: ${port}
+    password: ${uuid}
+    skip-cert-verify: true
+    sni: ${sni}
+    network: ${netType}
+    ws-opts:
+      path: ${path}
+      headers:
+        Host: ${host}
+    udp: true`;
+        } else if (protocol === "ss") {
+          return `proxies:
+  - name: ${name}
+    server: ${server}
+    type: ss
+    port: ${port}
+    cipher: none
+    password: ${uuid}
+    plugin: v2ray-plugin
+    plugin-opts:
+      mode: websocket
+      tls: ${tls}
+      skip-cert-verify: true
+      host: ${host}
+      path: ${path}`;
+        }
+        
+        return "Unsupported protocol for Clash";
+      }
+
+      function generateSingBox(protocol, name, server, port, uuid, netType, path, host, security, sni) {
+        const tls = security === "tls";
+        
+        const config = {
+          outbounds: [{
+            type: protocol === "ss" ? "shadowsocks" : protocol,
+            tag: name,
+            server: server,
+            server_port: parseInt(port)
+          }]
+        };
+
+        if (protocol === "vless") {
+          config.outbounds[0].uuid = uuid;
+          config.outbounds[0].tls = tls ? {
+            enabled: true,
+            server_name: sni,
+            insecure: true
+          } : undefined;
+          config.outbounds[0].transport = {
+            type: netType,
+            path: path,
+            headers: { Host: host }
+          };
+        } else if (protocol === "trojan") {
+          config.outbounds[0].password = uuid;
+          config.outbounds[0].tls = {
+            enabled: true,
+            server_name: sni,
+            insecure: true
+          };
+          config.outbounds[0].transport = {
+            type: netType,
+            path: path,
+            headers: { Host: host }
+          };
+        }
+
+        return JSON.stringify(config, null, 2);
       }
 
       function getCountryName(code) {
