@@ -1,3 +1,16 @@
+/**
+ * Cloudflare Workers - VPN Proxy Handler (Original Version)
+ *
+ * Original Version - Simple and Working
+ * - Basic VPN proxy functionality
+ * - Auto-detect domain from request
+ * - Support multiple protocols (trojan, vmess, shadowsocks)
+ * - Dynamic configuration based on hostname
+ *
+ * @version 1.0.0-original
+ * @author Jhopan
+ */
+
 import { connect } from "cloudflare:sockets";
 
 // Variables
